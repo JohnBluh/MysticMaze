@@ -1,2 +1,103 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+import pygame #importer Pygame
+from pygame.locals import *
+
+pygame.init() #Initialiser pygame
+
+
+#variable taille écran
+HAUTEUR = 600
+LARGEUR = 800
+
+#créer la fenetre de jeu
+fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
+
+#__________________________FOND+PERSONNAGE_________________________________
+
+# ***Fond***
+Fond = pygame.image.load("./Images/3D_creation_foret_-_1920x1080.jpg").convert()
+fenetre.blit(Fond, (0,0))
+
+
+#--------------------------Mystic--------------------------
+Mystic = pygame.image.load("./Images/Sprite chat.PNG").convert_alpha()
+DEFAULT_IMAGE_SIZE_M = (128,128)
+Mystic = pygame.transform.scale(Mystic, DEFAULT_IMAGE_SIZE_M)
+position_Mystic = pygame.Vector2(-50, -50)
+
+
+#animations walk
+walkRightLink = [pygame.image.load('./Images/LinkR1.png'), pygame.image.load('./Images/LinkR2.png')]
+walkLeftLink = [pygame.image.load('./Images/LinkL1.png'), pygame.image.load('./Images/LinkL2.png')]
+walkDownLink = [pygame.image.load('./Images/LinkB1.png'), pygame.image.load('./Images/LinkB2.png')]
+walkUpLink = [pygame.image.load('./Images/LinkH1.png'), pygame.image.load('./Images/LinkH2.png')]
+
+
+#__________________________INTERFACE_________________________________
+
+#--------------------------Barre de vie--------------------------
+Heart = pygame.image.load("./Images/Coeur_pixel.PNG").convert_alpha()
+DEFAULT_IMAGE_SIZE_C = (64,64)
+Heart = pygame.transform.scale(Heart, DEFAULT_IMAGE_SIZE_C)
+#fenetre.blit(Heart, (20,20))
+
+#health class
+class HealthBar():
+    def __init__(self, x, y, w, h, max_hp): # X et Y coordonnées, W et H largeur et hauteur, le max de PV
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.hp = max_hp #commencer avec tout les PV
+        self.max_hp = max_hp
+
+    def draw(self, surface):
+        #calcule le ration de vie
+        ratio = self.hp / self.max_hp
+        pygame.draw.rect(fenetre, "red", (40, 35, 250, 20))
+        pygame.draw.rect(fenetre, "green", (40, 35, 250 * ratio, 20))
+        fenetre.blit(Heart, (10,10))
+
+Health_bar = HealthBar( 250, 200, 300, 40, 100)
+
+#--------------------------Objects--------------------------
+
+pygame.display.flip()
+
+
+
+#__________________________BOUCLE JEU_________________________________
+#variable de condition
+run = True
+#loop de conditions 
+while run:
+
+    #draw health bar
+    #Health_bar.hp = 82
+    Health_bar.draw(fenetre)
+    for event in pygame.event.get():
+        if event.type == KEYDOWN:
+            if event.key == K_DOWN:	#bas
+                position_Mystic = position_Mystic + (0,3)
+        if event.type == KEYDOWN:
+            if event.key == K_UP:	#haut
+                position_Mystic = position_Mystic + (0,-3)
+        if event.type == KEYDOWN:
+            if event.key == K_LEFT:	#gauche
+                position_Mystic = position_Mystic + (-3,0)
+        if event.type == KEYDOWN:
+            if event.key == K_RIGHT: #bas
+                position_Mystic = position_Mystic + (3,0)
+
+    # tests health bar
+        if event.type == KEYDOWN:
+            if event.key == K_a:
+                Health_bar.hp = Health_bar.hp - 5
+
+
+
+        if event.type == pygame.QUIT:  #event fermer le jeu
+            run = False
+
+    pygame.display.update() #update la fenetre
+
+pygame.quit()
